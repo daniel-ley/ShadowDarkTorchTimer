@@ -1,4 +1,4 @@
-let torchDuration = 1;  //minutes
+let torchDuration = 60;  //minutes
 let torchStatus = "unlit";
 let torchImage = document.getElementById("torchImage");
 let lightButton = document.getElementById("lightButton");
@@ -15,7 +15,10 @@ function torchBurningLoop() {
   let minute = timeArray[0];
   let second = checkSecond((timeArray[1] - 1));
 
-  manageTorch(minute, second);
+  if (torchStatus == "unlit") {
+    torchImage = "img/Torch_0.png";
+    return
+  }
 
   if(second == 59){
     minute = minute - 1
@@ -27,6 +30,8 @@ function torchBurningLoop() {
   
   document.getElementById('remaining_time').innerHTML =
     minute + " : " + second;
+
+  manageTorch(minute, second);
 
   setTimeout(torchBurningLoop, 1000);
 
@@ -43,19 +48,19 @@ function checkSecond(sec) {
 }
 
 function manageTorch(min, sec) {
-  if (min == 0 && sec == 59) {
+  if (min == 59 && sec == 59) {
     torchImage.src = "img/Torch_1.png";
   }
 
-  if (min == 0 && sec ==45) {
+  if (min == 45 && sec ==0) {
     torchImage.src = "img/Torch_2.png";
   };
 
-  if (min == 0 && sec == 30) {
+  if (min == 30 && sec == 0) {
     torchImage.src = "img/Torch_3.png";
   };
 
-  if (min == 0 && sec == 15) {
+  if (min == 15 && sec == 0) {
     torchImage.src = "img/Torch_4.png";
   };
 
@@ -65,18 +70,18 @@ function manageTorch(min, sec) {
 
   if (min == 0 && sec == 0) {
     torchImage.src = "img/Torch_6.png";
+    torchStatus = "unlit";
   };
 }
 
-
-function lightTorch(){
-  if (torchStatus == "unlit" || clock.innerHTML == "00 : 00") {
-  clock.innerHTML = torchDuration + " : " + "00";
+function reset_torch() {
   torchStatus = "burning";
-  torchImage.src = "img/Torch_1.png";
-  torchBurningLoop();
-  } else {
   clock.innerHTML = torchDuration + " : " + "00";
   torchImage.src = "img/Torch_1.png";
-  }
+}
+
+function lightTorch() {
+    torchStatus = "unlit";
+    setTimeout(reset_torch,1001)
+    setTimeout(torchBurningLoop, 1001);
 }
